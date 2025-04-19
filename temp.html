@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature converter</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: rgb(243, 237, 237);
+        }
+        h1{
+            color: rgb(123, 123, 202);
+        }
+        form{
+            background-color: white;
+            text-align: center;
+            max-width: 350px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px black;
+        }
+        #tempc{
+            width: 50%;
+            text-align: center;
+            font-size: 2em;
+            border: 2px solid black;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        label{
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        button{
+            margin-top: 15px;
+            background-color: rgb(78, 236, 78);
+            color: white;
+            font-size: 1.5em;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover{
+            background-color: rgb(127, 248, 127);
+        }
+        #result{
+            font-size: 1.75em;
+            font-weight: bold;
+        }
+        #home{
+            width: 90%;
+      max-width: 300px;
+      height: 54px;
+      margin-top: 50px;
+      background: #7494ec;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0,.1);
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
+      font-weight: 600;
+      margin-left: 40%;
+        }
+    </style>
+</head>
+<body>
+     <form>
+        <h1>Temperature Conversion</h1>
+        <input type="number" id="tempc" value="" name="temp"><br>
+        
+        <input type="radio" name="option" id="toFahrenheit">
+        <label for="toFahrenheit">Celsius -> Fahrenheit</label><br>
+        
+        <input type="radio" name="option" id="toCelsius">
+        <label for="toCelsius">Fahrenheit -> Celsius</label><br>
+
+        <button type="button" onclick="convert()">Submit</button>
+        <p id="result"></p>
+     </form>
+         
+        <button id="home" onclick="window.location.href = 'index.html'">WEATHER</button>
+     <script>
+        const tempc = document.getElementById("tempc");
+        const toFahrenheit = document.getElementById("toFahrenheit");
+        const toCelsius = document.getElementById("toCelsius");
+        const result = document.getElementById("result");
+        let temp;
+
+        function convert(){
+            if(toFahrenheit.checked){
+                temp = Number(tempc.value);
+                temp  = temp * 9 /5 +32;
+                result.textContent = temp.toFixed(1) + " °F";
+            }
+            else if(toCelsius.checked){
+                temp = Number(tempc.value);
+                temp  = (temp-32) * (5/9);
+                result.textContent = temp.toFixed(1) + " °C";
+            }
+            else{
+                result.textContent = "Please select a conversion option.";
+            }
+        }
+    </script>
+</body>
+</html>

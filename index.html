@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .weather {
+            margin: 20px;
+        }
+        .city {
+            padding: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 2px solid rgba(55, 55, 55, 0.818);
+            border-radius: 10px;
+            margin: 10px;
+            width: 300px;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 2rem;
+            background-color: rgb(9, 168, 9);
+            color: aliceblue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: green;
+        }
+        .card {
+            background: linear-gradient(180deg, rgb(77, 191, 247), rgb(255, 255, 94));
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px black;
+            min-width: 300px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        p {
+            font-size: 1.5rem;
+            margin: 5px 0;
+        }
+        .cityDisplay, .tempDisplay {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 25px;
+        }
+        .humidityDisplay {
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        .descDisplay {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+        .weatherEmoji {
+            margin: 0;
+            font-size: 7.5rem;
+        }
+        .errorDisplay {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: black;
+        }
+        #temp{
+            width: 90%;
+      max-width: 300px;
+      height: 54px;
+      margin-top: 50px;
+      background: #7494ec;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0,.1);
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
+      font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <form class="weather">
+        <input type="text" class="city" placeholder="Enter city">
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <div class="card"></div>
+    <button id="temp" onclick="window.location.href = 'temp.html'">Convert Temperature</button>
+
+    <script>
+        const weatherForm = document.querySelector(".weather");
+        const cityInput = document.querySelector(".city");
+        const card = document.querySelector(".card");
+        const apikey = "c87d7223d2d678da305dcec853d440b6";
+
+        weatherForm.addEventListener("submit", async event => {
+            event.preventDefault();
+            const city = cityInput.value.trim();
+
+            if (city) {
+                try {
+                    const weatherdata = await getWeather(city);
+                    displayWeather(weatherdata);
+                } catch (error) {
+                    console.error(error);
+                    displayerror("Could not fetch weather data");
+                }
+            } else {
+                displayerror("Please enter a city");
+            }
+        });
+
+        async function getWeather(city) {
+            const apiurl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}`;
+            const response = await fetch(apiurl);
+
+            if (!response.ok) {
+                throw new Error("Could not fetch weather data");
+            }
+            return await response.json();
+        }
+
+        function displayWeather(data) {
+            const { name: city, main: { temp, humidity }, weather: [{ description, id }] } = data;
+
+            card.textContent = "";
+            card.style.display = "flex";
+
+            const cityDisplay = document.createElement("h1");
+            const tempDisplay = document.createElement("p");
+            const humidityDisplay = document.createElement("p");
+            const descDisplay = document.createElement("p");
+            const weatherEmoji = document.createElement("p");
+
+            cityDisplay.textContent = city;
+            tempDisplay.textContent = `${(temp-273).toFixed(2)} C`;
+            humidityDisplay.textContent = `Humidity: ${humidity}`;
+            descDisplay.textContent = description;
+            weatherEmoji.textContent = getWeatheremoji(id);
+
+            cityDisplay.classList.add("cityDisplay");
+            tempDisplay.classList.add("tempDisplay");
+            humidityDisplay.classList.add("humidityDisplay");
+            descDisplay.classList.add("descDisplay");
+            weatherEmoji.classList.add("weatherEmoji");
+
+            card.appendChild(cityDisplay);
+            card.appendChild(tempDisplay);
+            card.appendChild(humidityDisplay);
+            card.appendChild(descDisplay);
+            card.appendChild(weatherEmoji);
+        }
+
+        function getWeatheremoji(id) {
+            switch (true) {
+                case (id >= 200 && id < 300): return "⛈️";
+                case (id >= 300 && id < 400): return "🌦️";
+                case (id >= 500 && id < 600): return "🌧️";
+                case (id >= 600 && id < 700): return "❄️";
+                case (id >= 700 && id < 800): return "🌫️";
+                case (id === 800): return "☀️";
+                case (id >= 801 && id < 810): return "☁️";
+                default: return "❓";
+            }
+        }
+
+        function displayerror(message) {
+            const errorDisplay = document.createElement("p");
+            errorDisplay.textContent = message;
+            errorDisplay.classList.add("errorDisplay");
+
+            card.textContent = "";
+            card.style.display = "flex";
+            card.appendChild(errorDisplay);
+        }
+    </script>
+</body>
+</html>
